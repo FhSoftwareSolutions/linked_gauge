@@ -18,11 +18,19 @@ app.get('/', (req, res) => {
 app.post('/arduinoData', (req, res) => {
   const data = req.body;
   console.log('Dados recebidos do Arduino:', data);
-  // Processar os dados recebidos
-  res.json({ message: 'Dados recebidos com sucesso' });
+
+  dadosRecebidos.push({
+    dataRecebida: new Date(),
+    ...data
+  });
+ 
+  res.json({ message: 'Dados recebidos com sucesso', data });
 });
 
-const PORT = process.env.PORT || 3000;
+
+const PORT = process.env.PORT || 3060;
 server.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 }); 
+
+const dadosRecebidos = [];

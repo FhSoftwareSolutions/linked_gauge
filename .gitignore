@@ -21,6 +21,7 @@ pids
 .idea/
 *.swp
 *.swo
+.cursor\rules
 
 # OS
 .DS_Store
