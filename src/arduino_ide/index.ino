@@ -2,7 +2,7 @@
 #include "WiFi.h"
 #include "HTTPClient.h"
 
-const char* ssid = "WFSN
+const char* ssid = "WFSN";
 const char* password = "fatec@259";
 const int REED = 4;
 
