@@ -1,6 +1,6 @@
 # API Arduino
 
-Este projeto consiste em uma API desenvolvida ##(Vibe Coded)## para receber dados de um Arduino via WiFi. A API é capaz de processar dados enviados por um sensor conectado ao Arduino, como um pluviômetro, e armazená-los para posterior análise.
+Este projeto consiste em uma API desenvolvida **Vibe Coded** para receber dados de um Arduino via WiFi. A API é capaz de processar dados enviados por um sensor conectado ao Arduino, como um pluviômetro, e armazená-los para posterior análise.
 
 ## Requisitos
 
