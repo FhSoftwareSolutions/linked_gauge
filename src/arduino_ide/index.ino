@@ -7,17 +7,14 @@ const char* password = "fatec@259";
 const int REED = 4;
 
 const char* serverName = "http://189.90.97.245:3000/arduinoData";
- 
-// Variáveis:
+
 int val = 0;
 int old_val = 0;
 int REEDCOUNT = 0;
- 
+
 void setup() {
-   // Initializa a comunicaçao serial:
   Serial.begin(9600);
-  // Initializa o pino do switch como entrada
-  pinMode (REED, INPUT_PULLUP); //This activates the internal pull up resistor
+  pinMode (REED, INPUT_PULLUP);
 
   WiFi.begin(ssid, password);
 
@@ -27,16 +24,15 @@ void setup() {
   }
   Serial.println("Conectado ao WiFi");
 }
- 
+
 void loop() {
-  val = digitalRead(REED);      // Lê o Status do Reed Switch
- 
-  if ((val == LOW) && (old_val == HIGH)) {   // Verefica se o Status mudou
-    delay(10);                   // Atraso colocado para lidar com qualquer "salto" no switch.
-    REEDCOUNT = REEDCOUNT + 1;   // Adiciona 1 à cntagem de pulsos
-    old_val = val;              //Iguala o valor antigo com o atual
- 
-    // Imprime no Monitor Serial
+  val = digitalRead(REED);
+
+  if ((val == LOW) && (old_val == HIGH)) {
+    delay(10);
+    REEDCOUNT = REEDCOUNT + 1;
+    old_val = val;
+
     Serial.print("Medida de chuva (contagem): ");
     Serial.print(REEDCOUNT);
     Serial.println(" pulso");
@@ -49,7 +45,6 @@ void loop() {
       http.begin(serverName);
       http.addHeader("Content-Type", "application/json");
 
-      // Monta o JSON
       float mm = REEDCOUNT * 0.25;
       String json = "{\"pulsos\": " + String(REEDCOUNT) + ", \"mm_de_chuva\": " + String(mm, 2) + "}";
 
@@ -67,11 +62,9 @@ void loop() {
 
       http.end();
     }
-    }
-  
- 
+  }
   else {
-    old_val = val;              //If the status hasn't changed then do nothing
+    old_val = val;
   }
 }
 

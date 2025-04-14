@@ -9,12 +9,10 @@ const server = http.createServer(app);
 app.use(cors());
 app.use(express.json());
 
-// Rota básica para verificar se a API está funcionando
 app.get('/', (req, res) => {
   res.json({ message: 'API Arduino está funcionando!' });
 });
 
-// Endpoint para receber dados do Arduino
 app.post('/arduinoData', (req, res) => {
   const data = req.body;
   console.log('Dados recebidos do Arduino:', data);
@@ -23,14 +21,13 @@ app.post('/arduinoData', (req, res) => {
     dataRecebida: new Date(),
     ...data
   });
- 
+
   res.json({ message: 'Dados recebidos com sucesso', data });
 });
-
 
 const PORT = process.env.PORT || 3060;
 server.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
-}); 
+});
 
 const dadosRecebidos = [];
