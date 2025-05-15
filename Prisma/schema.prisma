@@ -1,0 +1,15 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Leitura {
+  id           Int      @id @default(autoincrement())
+  pulsos       Int
+  mm_de_chuva  Float
+  dataRecebida DateTime @default(now())
+}

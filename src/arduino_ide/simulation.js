@@ -36,13 +36,13 @@ app.post('/arduinoData', (req, res) => {
   res.json({ message: 'Dados recebidos com sucesso', data });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3070;
 server.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
 
 // Defina a URL da API (ajuste para o localHost ser o IP de sua máquina)
-const url = 'http://localhost:3060/arduinoData';
+const url = 'http://189.90.97.245:3060/arduinoData';
 
 // Variável para simular os pulsos
 let pulsos = 0;

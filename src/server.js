@@ -1,6 +1,7 @@
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
+const prisma = require('./db');
 require('dotenv').config();
 
 const app = express();
@@ -9,28 +10,32 @@ const server = http.createServer(app);
 app.use(cors());
 app.use(express.json());
 
-// Rota básica para verificar se a API está funcionando
 app.get('/', (req, res) => {
   res.json({ message: 'API Arduino está funcionando!' });
 });
 
-// Endpoint para receber dados do Arduino
-app.post('/arduinoData', (req, res) => {
-  const data = req.body;
-  console.log('Dados recebidos do Arduino:', data);
+app.post('/arduinoData', async (req, res) => {
+  const { pulsos } = req.body;
+  const mm_de_chuva = pulsos * 0.25;
 
-  dadosRecebidos.push({
-    dataRecebida: new Date(),
-    ...data
-  });
- 
-  res.json({ message: 'Dados recebidos com sucesso', data });
+  try {
+    const leitura = await prisma.leitura.create({
+      data: {
+        pulsos,
+        mm_de_chuva,
+        dataRecebida: new Date()
+      }
+    });
+
+    console.log('Dados salvos no banco:', leitura);
+    res.json({ message: 'Dados recebidos com sucesso', leitura });
+  } catch (error) {
+    console.error('Erro ao salvar no banco:', error);
+    res.status(500).json({ error: 'Erro ao salvar os dados' });
+  }
 });
-
 
 const PORT = process.env.PORT || 3060;
 server.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
-}); 
-
-const dadosRecebidos = [];
+});
