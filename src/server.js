@@ -16,6 +16,29 @@ app.get('/', (req, res) => {
   res.json({ message: 'API Pluviômetro está funcionando!' });
 });
 
+// ROTA PARA O OVERVIEW MENSAL (total de chuva por mês) - VERSÃO CORRIGIDA
+app.get('/data/overview/monthly', async (req, res) => {
+    // LINHA DE TESTE: Adicione esta linha
+    console.log('--- EXECUTANDO A ROTA DE OVERVIEW MENSAL (VERSÃO CORRIGIDA) ---');
+
+    try {
+        const monthlyData = await prisma.$queryRaw`
+            SELECT 
+                strftime('%Y-%m', "dataRecebida") as "month",
+                SUM("mm_de_chuva") as "totalAmount"
+            FROM "Leitura"
+            GROUP BY strftime('%Y-%m', "dataRecebida")
+            ORDER BY "month" ASC;
+        `;
+        const sanitizedData = monthlyData.map(d => ({ ...d, totalAmount: Number(d.totalAmount) }));
+        res.json(sanitizedData);
+    } catch (error) {
+        console.error("Erro ao buscar overview mensal:", error);
+        res.status(500).json({ error: "Erro interno ao buscar dados." });
+    }
+});
+
+// VERSÃO CORRIGIDA
 app.post('/arduinoData', async (req, res) => {
   const { pulsos } = req.body;
   if (pulsos === undefined) {
@@ -28,9 +51,10 @@ app.post('/arduinoData', async (req, res) => {
       data: {
         pulsos,
         mm_de_chuva,
-        dataRecebida: new Date()
+        dataRecebida: new Date().toISOString() // <--- CORREÇÃO APLICADA
       }
     });
+
     console.log('Dados salvos no banco:', leitura);
     res.status(201).json({ message: 'Dados recebidos com sucesso', leitura });
   } catch (error) {

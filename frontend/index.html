@@ -4,52 +4,13 @@
     <meta charset="UTF-8">
     <title>Dashboard Pluviômetro</title>
     <style>
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            padding: 20px; 
-            background-color: #f4f4f9; 
-            color: #333; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-        h1 { 
-            text-align: center; 
-            color: #444; 
-        }
-        .dashboard-container { 
-            width: 100%;
-            max-width: 900px; 
-            margin-top: 20px; 
-            padding: 25px; 
-            background: white; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
-        }
-        .buttons { 
-            text-align: center; 
-            margin-bottom: 25px; 
-        }
-        button { 
-            padding: 10px 20px; 
-            margin: 0 5px; 
-            cursor: pointer; 
-            border: 1px solid #ddd; 
-            background-color: #fff; 
-            border-radius: 5px; 
-            font-size: 14px; 
-            transition: all 0.2s ease; 
-        }
-        button:hover { 
-            background-color: #f0f0f0; 
-            border-color: #ccc; 
-        }
-        button.active { 
-            background-color: #0d6efd; 
-            color: white; 
-            border-color: #0d6efd; 
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; background-color: #f4f4f9; color: #333; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        h1 { text-align: center; color: #444; }
+        .dashboard-container { width: 100%; max-width: 900px; margin-top: 20px; padding: 25px; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .buttons { text-align: center; margin-bottom: 25px; }
+        button { padding: 10px 20px; margin: 0 5px; cursor: pointer; border: 1px solid #ddd; background-color: #fff; border-radius: 5px; font-size: 14px; transition: all 0.2s ease; }
+        button:hover { background-color: #f0f0f0; border-color: #ccc; }
+        button.active { background-color: #0d6efd; color: white; border-color: #0d6efd; }
     </style>
 </head>
 <body>
@@ -58,14 +19,13 @@
     <div class="dashboard-container">
         <div class="buttons">
             <button id="btn-today" onclick="loadChartData('today', this)">Hoje</button>
-            <button id="btn-week" onclick="loadChartData('week', this)">Semana</button>
-            <button id="btn-month" onclick="loadChartData('month', this)">Mês</button>
+            <button id="btn-month-overview" onclick="loadChartData('month_overview', this)">Visão Mensal</button>
         </div>
+
         <canvas id="rainfallChart"></canvas>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
     <script src="app.js"></script>
 </body>
 </html>
