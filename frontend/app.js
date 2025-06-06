@@ -1,32 +1,53 @@
-const API_BASE_URL = 'http://localhost:3333'; // A porta do seu servidor
+const API_BASE_URL = 'http://localhost:3060';
 const ctx = document.getElementById('rainfallChart').getContext('2d');
 let chart;
 
-// Função para atualizar o botão ativo
 function setActiveButton(button) {
     document.querySelectorAll('.buttons button').forEach(btn => {
         btn.classList.remove('active');
     });
-    if(button) button.classList.add('active');
+    if (button) {
+        button.classList.add('active');
+    }
 }
 
 async function loadChartData(period, buttonElement) {
     setActiveButton(buttonElement);
     try {
-        const response = await fetch(`<span class="math-inline">\{API\_BASE\_URL\}/data/</span>{period}`);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const response = await fetch(`${API_BASE_URL}/data/${period}`);
         const data = await response.json();
 
-        // O endpoint 'today' retorna 'value', os outros retornam 'totalValue'
-        const labels = data.map(item => new Date(item.date || item.created_at).toLocaleDateString('pt-BR', { hour: period === 'today' ? '2-digit' : undefined, minute: period === 'today' ? '2-digit' : undefined }));
-        const values = data.map(item => item.totalValue ?? item.value);
+        
+
+        const labels = data.map(item => {
+            // Pega a string da data, seja do campo 'date' (agregado) ou 'dataRecebida' (detalhado)
+            const dateString = item.date || item.dataRecebida;
+
+            // Se por algum motivo a data não existir, retorna uma string vazia para não quebrar o gráfico
+            if (!dateString) { return ''; }
+
+            // Aplica a correção segura para o formato AAAA-MM-DD
+            const safeDate = new Date(dateString.replace(/-/g, '/'));
+            
+            // Se mesmo assim a data for inválida, loga um erro
+            if (isNaN(safeDate.getTime())) {
+                console.error('Data inválida encontrada:', dateString);
+                return 'Data Inválida';
+            }
+
+            return period === 'today' 
+                ? safeDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) 
+                : safeDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+        });
+
+        const values = data.map(item => item.totalAmount ?? item.mm_de_chuva);
 
         let chartType = period === 'today' ? 'line' : 'bar';
-        let chartLabel = period === 'today' ? 'Volume de Chuva (pontual)' : 'Chuva Acumulada por Dia (mm)';
+        let chartLabel = `Chuva (${period === 'today' ? 'mm por leitura' : 'mm por dia'})`;
 
         if (chart && chart.config.type !== chartType) {
-             chart.destroy(); // Destrói o gráfico antigo se o tipo mudar
-             chart = null;
+            chart.destroy();
+            chart = null;
         }
 
         if (chart) {
@@ -42,26 +63,33 @@ async function loadChartData(period, buttonElement) {
                     datasets: [{
                         label: chartLabel,
                         data: values,
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1.5,
-                        tension: 0.1 // Para suavizar a linha
+                        backgroundColor: 'rgba(13, 110, 253, 0.5)',
+                        borderColor: 'rgba(13, 110, 253, 1)',
+                        borderWidth: 2,
+                        tension: 0.1
                     }]
                 },
                 options: {
-                    scales: { y: { beginAtZero: true, title: { display: true, text: 'Volume (mm)' } } },
-                    plugins: { legend: { position: 'top' } }
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Volume de Chuva (mm)'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top' }
+                    }
                 }
             });
         }
     } catch (error) {
         console.error("Falha ao carregar dados do gráfico:", error);
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Limpa o canvas em caso de erro
-        ctx.fillText("Não foi possível carregar os dados.", 10, 50);
     }
 }
 
-// Carrega os dados da semana por padrão ao abrir a página
 window.onload = () => {
     const initialButton = document.getElementById('btn-week');
     loadChartData('week', initialButton);
